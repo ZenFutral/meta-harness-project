@@ -73,6 +73,13 @@ class GuiRequestHandler(SimpleHTTPRequestHandler):
             ctype = ctype + "; charset=utf-8"
         return ctype
 
+    def end_headers(self) -> None:
+        """Ensure no-cache headers are set on all responses, including static assets."""
+        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.send_header("Pragma", "no-cache")
+        self.send_header("Expires", "0")
+        super().end_headers()
+
     def _send_json(self, data: Any, status: int = 200) -> None:
         """Helper to send JSON response with CORS headers."""
         body = json.dumps(data, indent=2).encode("utf-8")
@@ -82,7 +89,6 @@ class GuiRequestHandler(SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
         self.end_headers()
         self.wfile.write(body)
 

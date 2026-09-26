@@ -19,7 +19,7 @@ const state = {
   pollInterval: null,
   pollFrequencyMs: 2000,
   chatMessages: [],
-  selectedPersona: 'auto',
+  selectedPersona: localStorage.getItem('meta_harness_chat_persona') || 'auto',
   isChatSending: false,
   selectedBackend: 'antigravity',   // 'antigravity' | 'vertex'
   selectedAgentId: null,
@@ -1512,6 +1512,43 @@ function setupChatListeners() {
   const btnClearChat = document.getElementById('btn-clear-chat');
   const quickChips = document.querySelectorAll('.chip-btn');
 
+  // Persona picker
+  const personaItems = document.querySelectorAll('.persona-pick-item');
+  const chatTargetDisplay = document.getElementById('chat-target-display');
+
+  function applyActivePersona(persona) {
+    state.selectedPersona = persona || 'auto';
+    localStorage.setItem('meta_harness_chat_persona', state.selectedPersona);
+    personaItems.forEach(item => {
+      item.classList.toggle('active', item.getAttribute('data-persona') === state.selectedPersona);
+    });
+    if (chatTargetDisplay) {
+      const titles = {
+        auto: 'Router Agent Workspace',
+        orchestrator: 'Orchestrator Supervisor Workspace',
+        planner: 'DAG Architecture Planner Workspace',
+        coder: 'Code Synthesis Agent Workspace',
+        tester: 'Automated Test Runner Workspace',
+        reviewer: 'Code Reviewer & Auditor Workspace',
+        debugger: 'Traceback & Debugger Workspace'
+      };
+      chatTargetDisplay.textContent = titles[state.selectedPersona] || `${state.selectedPersona.toUpperCase()} Agent Workspace`;
+    }
+  }
+
+  if (state.selectedPersona) {
+    applyActivePersona(state.selectedPersona);
+  }
+
+  personaItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const persona = item.getAttribute('data-persona');
+      applyActivePersona(persona);
+      const name = item.querySelector('.persona-pick-name')?.textContent || persona;
+      showToast(`Active Persona: ${name}`, 'info');
+    });
+  });
+
   // Backend mode buttons
   document.querySelectorAll('.backend-mode-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -1600,6 +1637,7 @@ async function handleChatSubmit() {
     focusFiles = contextFilesInput.value.split(',').map(s => s.trim()).filter(Boolean);
   }
 
+  const activePersona = state.selectedPersona || 'auto';
   const optimisticUserMsg = {
     id: `opt_${Date.now()}`,
     sender: 'user',
@@ -1607,7 +1645,7 @@ async function handleChatSubmit() {
     role: 'user',
     content: text,
     timestamp: new Date().toLocaleTimeString(),
-    target_persona: 'auto'
+    target_persona: activePersona
   };
   state.chatMessages.push(optimisticUserMsg);
   renderChatMessages();
@@ -1619,7 +1657,7 @@ async function handleChatSubmit() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         message: text,
-        persona: 'auto',
+        persona: activePersona,
         context_files: focusFiles,
         backend: state.selectedBackend
       })

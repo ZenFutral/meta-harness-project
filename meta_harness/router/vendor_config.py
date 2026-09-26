@@ -20,13 +20,6 @@ WORKSPACE_USER_CONFIG = WORKSPACE_ROOT / "user_config.json"
 
 DEFAULT_VENDOR_CONFIG: Dict[str, Any] = {
     "vendors": {
-        "huggingface": {
-            "name": "Hugging Face Serverless",
-            "enabled": True,
-            "primary_model": "facebook/bart-large-mnli",
-            "role": "Tier 0 Zero-Shot Intent Classification",
-            "tier": "Tier 0 Triage"
-        },
         "vertex": {
             "name": "Vertex AI (Gemini Flash)",
             "enabled": True,
@@ -39,13 +32,6 @@ DEFAULT_VENDOR_CONFIG: Dict[str, Any] = {
             "enabled": True,
             "primary_model": "gemini-3-pro-preview",
             "role": "Tier 2 Deep Agentic Execution & Pro Subscription",
-            "tier": "Tier 2 Execution"
-        },
-        "openai": {
-            "name": "OpenAI Platform",
-            "enabled": True,
-            "primary_model": "gpt-5.1",
-            "role": "Tier 2 Reasoning & Code Synthesis",
             "tier": "Tier 2 Execution"
         }
     },

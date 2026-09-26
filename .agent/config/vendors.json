@@ -1,12 +1,5 @@
 {
   "vendors": {
-    "huggingface": {
-      "name": "Hugging Face Serverless",
-      "enabled": true,
-      "primary_model": "facebook/bart-large-mnli",
-      "role": "Tier 0 Zero-Shot Intent Classification",
-      "tier": "Tier 0 Triage"
-    },
     "vertex": {
       "name": "Vertex AI (Gemini Flash)",
       "enabled": true,
@@ -20,6 +13,13 @@
       "primary_model": "gemini-3-pro-preview",
       "role": "Tier 2 Deep Agentic Execution & Pro Subscription",
       "tier": "Tier 2 Execution"
+    },
+    "huggingface": {
+      "name": "Hugging Face Serverless",
+      "enabled": true,
+      "primary_model": "facebook/bart-large-mnli",
+      "role": "Tier 0 Zero-Shot Intent Classification",
+      "tier": "Tier 0 Triage"
     },
     "openai": {
       "name": "OpenAI Platform",

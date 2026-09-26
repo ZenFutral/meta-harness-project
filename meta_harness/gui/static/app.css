@@ -2031,7 +2031,18 @@ input:checked + .slider:before {
 
 /* Visibility Rules for Dev Mode */
 /* DEFAULT STATE (Dev Mode Disabled - OFF) */
+body:not(.dev-mode-active) .dev-only,
+body:not(.dev-mode-active) .dev-action-toolbar,
+body:not(.dev-mode-active) .feature-card-actions,
+body:not(.dev-mode-active) .feature-probe-accordion {
+  display: none !important;
+}
+
 .dev-only {
+  display: none !important;
+}
+
+.dev-action-toolbar {
   display: none !important;
 }
 
@@ -2044,6 +2055,10 @@ input:checked + .slider:before {
 }
 
 /* ACTIVE STATE (Dev Mode Enabled - ON) */
+body.dev-mode-active .dev-action-toolbar {
+  display: flex !important;
+}
+
 body.dev-mode-active .dev-only {
   display: block !important;
 }
@@ -2056,12 +2071,12 @@ body.dev-mode-active .tab-summary-card.dev-only {
   display: flex !important;
 }
 
-body.dev-mode-active .btn.dev-only {
-  display: inline-flex !important;
+body.dev-mode-active .hud-card.dev-only {
+  display: flex !important;
 }
 
-body.dev-mode-active .dev-action-toolbar {
-  display: flex !important;
+body.dev-mode-active .btn.dev-only {
+  display: inline-flex !important;
 }
 
 body.dev-mode-active .feature-card-actions {
