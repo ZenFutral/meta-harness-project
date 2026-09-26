@@ -31,7 +31,7 @@ class RepomapStorage:
         # Initialise only once
         if getattr(self, "_conn", None):
             return
-        self._conn = sqlite3.connect(str(DB_PATH))
+        self._conn = sqlite3.connect(str(DB_PATH), check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
         self._setup_pragmas()
         self._ensure_schema()

@@ -31,9 +31,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--goal",     required=True, help="High-level task goal")
     parser.add_argument("--context",  default="",    help="Optional extra context (file path or inline string)")
     parser.add_argument("--location", default="us-central1", help="Vertex AI region")
-    parser.add_argument("--backend",  default="vertex",
-                        choices=["vertex", "antigravity"],
-                        help="Model backend: 'vertex' (default) or 'antigravity'")
+    parser.add_argument("--backend",  default="antigravity",
+                        choices=["antigravity", "vertex"],
+                        help="Model backend: 'antigravity' (default) or 'vertex'")
     parser.add_argument("--resume",   action="store_true",
                         help="Resume from persisted .orchestrator/state.json")
     parser.add_argument("--repo",     default="",

@@ -44,7 +44,7 @@ class Phase7Tests(unittest.TestCase):
         # Test import from legacy orchestrator location re-export
         from orchestrator.router import ModelRouter as LegacyRouter
         leg_router = LegacyRouter()
-        self.assertEqual(leg_router.model_id_for_persona("coder"), "gemini-2.0-flash")
+        self.assertEqual(leg_router.model_id_for_persona("coder"), "gemini-3-pro-preview")
 
     def test_step_7_3_zero_shot_fast_path(self):
         classifier = ZeroShotIntentClassifier()
@@ -66,9 +66,11 @@ class Phase7Tests(unittest.TestCase):
         self.assertTrue(manifest.require_blast_radius)
 
         # Simulate budget trip
+        import time
+        today = time.strftime("%Y-%m-%d")
         tmp_dir = tempfile.TemporaryDirectory()
         quota_file = Path(tmp_dir.name) / "quota.json"
-        quota_file.write_text('{"date": "2026-09-25", "tokens": 10000000, "cost": 0.50}')
+        quota_file.write_text(f'{{"date": "{today}", "tokens": 10000000, "cost": 0.50}}')
         orig_quota = budget_mod.QUOTA_FILE
         budget_mod.QUOTA_FILE = quota_file
 

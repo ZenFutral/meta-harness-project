@@ -17,10 +17,17 @@
     "antigravity": {
       "name": "Google Antigravity CLI",
       "enabled": true,
-      "primary_model": "antigravity-default",
+      "primary_model": "gemini-3-pro-preview",
       "role": "Tier 2 Deep Agentic Execution & Pro Subscription",
+      "tier": "Tier 2 Execution"
+    },
+    "openai": {
+      "name": "OpenAI Platform",
+      "enabled": true,
+      "primary_model": "gpt-5.1",
+      "role": "Tier 2 Reasoning & Code Synthesis",
       "tier": "Tier 2 Execution"
     }
   },
-  "active_backend": "vertex"
+  "active_backend": "antigravity"
 }

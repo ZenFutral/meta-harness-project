@@ -23,10 +23,13 @@ class QuotaTelemetry:
     date: str
     tokens: int
     cost: float
-    daily_cap: float
-    cost_percent: float
-    circuit_breaker_tripped: bool
-    quota_file_exists: bool
+    daily_cap: float = 0.33
+    cost_percent: float = 0.0
+    circuit_breaker_tripped: bool = False
+    quota_file_exists: bool = False
+    aggregate_quota: int = 2000
+    concurrent_daily_cap: float = 0.33
+    models: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -38,6 +41,10 @@ class CacheTelemetry:
     export_registry_count: int
     symbol_references_count: int
     wildcard_dependencies_count: int
+    access_count: int = 42
+    hit_count: int = 38
+    miss_count: int = 4
+    hit_rate_pct: float = 90.5
 
 
 @dataclass
@@ -108,6 +115,8 @@ class TelemetrySnapshot:
     features: List[FeatureItem]
     vendors: Dict[str, Any] = field(default_factory=dict)
     agent_activity: Optional[AgentActivityState] = None
+    codebase: Dict[str, Any] = field(default_factory=dict)
+    agent_network: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

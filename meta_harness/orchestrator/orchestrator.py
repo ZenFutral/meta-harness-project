@@ -107,7 +107,7 @@ class Orchestrator:
         self,
         project: str = "meta-harness",
         location: str = "us-central1",
-        backend: str = "vertex",
+        backend: str = "antigravity",
         resume: bool = False,
     ) -> None:
         """Initialize the Orchestrator with project, location, backend, and resume flag.
@@ -115,8 +115,11 @@ class Orchestrator:
         Sets up the router, budget tracker, and agent instances. Also builds a mapping
         from each persona to its configured model ID based on the backend.
         """
-        import vertexai as _vertexai
-        _vertexai.init(project=project, location=location)
+        try:
+            import vertexai as _vertexai
+            _vertexai.init(project=project, location=location)
+        except Exception as e:
+            log.debug("vertexai init bypassed or unavailable: %s", e)
 
         self.router   = ModelRouter(backend=backend)
         self.budget   = BudgetTracker()
@@ -145,24 +148,6 @@ class Orchestrator:
                 "debugger",
             ]
         }
-
-        import vertexai as _vertexai
-        _vertexai.init(project=project, location=location)
-
-        self.router   = ModelRouter(backend=backend)
-        self.budget   = BudgetTracker()
-        self._project  = project
-        self._location = location
-
-        # Wire up the six agent personas
-        self._orchestrator_agent = OrchestratorAgent(self._llm_call)
-        self._planner            = PlannerAgent(self._llm_call)
-        self._coder              = CoderAgent(self._llm_call)
-        self._tester             = TesterAgent(self._llm_call)
-        self._reviewer           = ReviewerAgent(self._llm_call)
-        self._debugger           = DebuggerAgent(self._llm_call)
-
-        self._resume = resume
 
     # ------------------------------------------------------------------
     # Public API

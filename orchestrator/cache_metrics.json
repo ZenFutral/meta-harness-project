@@ -1,0 +1,20 @@
+{
+  "file1.txt": {
+    "reads": 1,
+    "writes": 0,
+    "hits": 1,
+    "misses": 0,
+    "bytes": 123,
+    "total_latency": 0.015,
+    "last_access": 1790450604.3228152
+  },
+  "file2.txt": {
+    "reads": 1,
+    "writes": 0,
+    "hits": 0,
+    "misses": 1,
+    "bytes": 0,
+    "total_latency": 0.03,
+    "last_access": 1790450604.3228216
+  }
+}

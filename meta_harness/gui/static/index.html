@@ -40,6 +40,18 @@
           <span class="metric-label">DAILY QUOTA SPEND</span>
           <span class="metric-val" id="val-quota-spend">$0.000 / $0.33</span>
         </div>
+        <div class="header-metric">
+          <span class="metric-label">WORKSPACE</span>
+          <span class="metric-val text-cyan" id="val-workspace-name">meta-harness</span>
+        </div>
+        <div class="header-metric">
+          <span class="metric-label">CODEBASE TOKENS</span>
+          <span class="metric-val text-emerald" id="val-codebase-tokens">0</span>
+        </div>
+        <div class="header-metric">
+          <span class="metric-label">FILES TRACKED</span>
+          <span class="metric-val" id="val-tracked-files">0</span>
+        </div>
         <div class="auto-refresh-toggle">
           <label class="switch">
             <input type="checkbox" id="auto-refresh-check" checked>
@@ -47,14 +59,41 @@
           </label>
           <span class="toggle-label">LIVE SYNC (2s)</span>
         </div>
+        <div class="dev-mode-toggle-wrap">
+          <label class="switch switch-dev" title="Toggle Developer Mode">
+            <input type="checkbox" id="dev-mode-check">
+            <span class="slider round slider-dev"></span>
+          </label>
+          <div class="dev-toggle-text">
+            <span class="dev-toggle-title">DEV MODE</span>
+            <span class="dev-mode-badge" id="dev-mode-badge">OFF</span>
+          </div>
+        </div>
       </div>
     </header>
+
+    <!-- Developer Mode Action Bar (Dev-Mode Only) -->
+    <div class="dev-action-toolbar dev-only" id="dev-action-toolbar">
+      <div class="dev-toolbar-left">
+        <div class="dev-pulse-tag">
+          <span class="dev-beacon"></span>
+          <span>DEV MODE ACTIVE</span>
+        </div>
+        <span class="dev-toolbar-hint">Developer suite exposed &bull; Interactive test runners, feature probes, and persona demo active</span>
+      </div>
+      <div class="dev-toolbar-actions">
+        <button class="btn btn-outline btn-sm" id="btn-dev-bar-run-tests">▶️ Run Pytest Suite</button>
+        <button class="btn btn-outline btn-sm" id="btn-dev-bar-fix-tests">⚡ Fix Tests (LLM Assist)</button>
+        <button class="btn btn-outline btn-sm" id="btn-dev-bar-test-log">📜 Test Output Logs</button>
+        <button class="btn btn-outline btn-sm" id="btn-dev-bar-regen-cache">🔄 Regen AST Cache</button>
+      </div>
+    </div>
 
     <!-- Navigation Bar -->
     <nav class="subsystem-nav">
       <button class="nav-tab active" data-tab="tab-overview">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-        System Vitals &amp; HUD
+        Dashboard
       </button>
       <button class="nav-tab" data-tab="tab-features">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
@@ -64,9 +103,9 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
         SQLite-WAL &amp; Graph Cache
       </button>
-      <button class="nav-tab" data-tab="tab-playground">
+      <button class="nav-tab dev-only" data-tab="tab-playground">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        Interactive Feature Probes
+        Interactive Feature Probes <span class="badge badge-dev-pill">DEV</span>
       </button>
       <button class="nav-tab" data-tab="tab-agents">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
@@ -76,24 +115,23 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
         Agent Chat Hub
       </button>
-      <button class="nav-tab" data-tab="tab-blueprint">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        Subsystem Blueprint
-      </button>
     </nav>
 
     <!-- Main Content Stage -->
     <main class="content-stage">
 
-      <!-- ================= TAB 1: SYSTEM VITALS ================= -->
+      <!-- ================= TAB 1: DASHBOARD / SYSTEM VITALS ================= -->
       <section id="tab-overview" class="tab-panel active">
         <div class="hud-grid">
           
           <!-- Card: Model Vendor Provider Toggles -->
           <div class="card glass-card hud-card" id="hud-card-vendors">
-            <div class="card-header">
-              <span class="card-subtitle">MULTI-TIER ROUTER &amp; PROVIDERS</span>
-              <h3>Model Vendor Configuration</h3>
+            <div class="card-header flex-between">
+              <div>
+                <span class="card-subtitle">MULTI-TIER ROUTER &amp; PROVIDERS</span>
+                <h3>Model Vendor Configuration</h3>
+              </div>
+              <button class="btn btn-outline btn-sm" id="btn-open-model-modal">Select Model</button>
             </div>
             <div class="card-body">
               <div class="vendor-list">
@@ -146,9 +184,12 @@
 
           <!-- Card: Budget & Circuit Breaker -->
           <div class="card glass-card hud-card" id="hud-card-budget">
-            <div class="card-header">
-              <span class="card-subtitle">ORCHESTRATOR GUARDRAIL</span>
-              <h3>Daily Quota &amp; Circuit Breaker</h3>
+            <div class="card-header flex-between">
+              <div>
+                <span class="card-subtitle">ORCHESTRATOR GUARDRAIL</span>
+                <h3>Daily Quota &amp; Circuit Breaker</h3>
+              </div>
+              <button class="btn btn-outline btn-sm" id="btn-open-quota-modal">Breakdown</button>
             </div>
             <div class="card-body gauge-body">
               <div class="radial-gauge-container">
@@ -186,7 +227,7 @@
           <div class="card glass-card hud-card">
             <div class="card-header">
               <span class="card-subtitle">CONTEXTUALIZE ENGINE</span>
-              <h3>Context Budget &amp; Token Packing</h3>
+              <h3>Context Budget &amp; Token Efficiency</h3>
             </div>
             <div class="card-body">
               <div class="progress-container">
@@ -198,6 +239,7 @@
                   <div class="progress-fill" id="bar-token-util" style="width: 0%"></div>
                 </div>
               </div>
+
               <div class="hud-stats-list mt-3">
                 <div class="stat-row">
                   <span class="stat-label">Total Ingested</span>
@@ -206,6 +248,10 @@
                 <div class="stat-row">
                   <span class="stat-label">Total Bundled</span>
                   <span class="stat-value font-mono" id="stat-bundled-tokens">0</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Packing Efficiency</span>
+                  <span class="stat-value font-mono text-emerald" id="stat-packing-efficiency">82.4%</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Active Git Branch</span>
@@ -219,54 +265,17 @@
             </div>
           </div>
 
-          <!-- Card: SQLite-WAL Cache Health -->
-          <div class="card glass-card hud-card">
-            <div class="card-header">
-              <span class="card-subtitle">REPOMAP TIER 0 STORAGE</span>
-              <h3>SQLite-WAL Dual-Tier Cache</h3>
-            </div>
-            <div class="card-body">
-              <div class="hud-stats-list">
-                <div class="stat-row">
-                  <span class="stat-label">Database File</span>
-                  <span class="stat-value font-mono">.agent/cache/repomap.db</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">WAL Mode Active</span>
-                  <span class="badge badge-success" id="stat-wal-mode">WAL ENABLED</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">Database Size</span>
-                  <span class="stat-value font-mono text-cyan" id="stat-db-size">0.00 MB</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">Cached Parsed Files</span>
-                  <span class="stat-value font-mono" id="stat-parse-cache-count">0</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">Symbol References</span>
-                  <span class="stat-value font-mono" id="stat-symbol-ref-count">0</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">Export Registries</span>
-                  <span class="stat-value font-mono" id="stat-export-reg-count">0</span>
-                </div>
+          <!-- Card: Test Verification & Regressions (Dev-Only) -->
+          <div class="card glass-card hud-card dev-only" id="hud-card-test">
+            <div class="card-header flex-between">
+              <div>
+                <span class="card-subtitle">VERIFICATION PIPELINE <span class="badge badge-dev-pill">DEV</span></span>
+                <h3>Automated Test Health</h3>
               </div>
-            </div>
-          </div>
-
-          <!-- Card: Test Verification & Regressions -->
-          <div class="card glass-card hud-card">
-            <div class="card-header">
-              <span class="card-subtitle">VERIFICATION PIPELINE</span>
-              <h3>Automated Test Health</h3>
+              <span class="badge badge-success" id="stat-test-status">SUCCESS</span>
             </div>
             <div class="card-body">
               <div class="hud-stats-list">
-                <div class="stat-row">
-                  <span class="stat-label">Suite Status</span>
-                  <span class="badge badge-success" id="stat-test-status">SUCCESS</span>
-                </div>
                 <div class="stat-row">
                   <span class="stat-label">Last Execution</span>
                   <span class="stat-value font-mono" id="stat-test-time">N/A</span>
@@ -276,14 +285,91 @@
                   <span class="stat-value font-mono" id="stat-test-duration">0 ms</span>
                 </div>
                 <div class="stat-row">
-                  <span class="stat-label">Passed Tests</span>
-                  <span class="stat-value font-mono text-emerald">43 / 43 Passed</span>
+                  <span class="stat-label">Passed Assertions</span>
+                  <span class="stat-value font-mono text-emerald" id="stat-test-passed-label">73 / 73 Passed</span>
                 </div>
+              </div>
+              <button class="btn btn-primary btn-sm mt-3 w-100" id="btn-run-tests">▶️ Execute Pytest Suite</button>
+              <div class="test-btn-row mt-2">
+                <button class="btn btn-outline btn-xs flex-1" id="btn-fix-tests">⚡ Fix (LLM Assist)</button>
+                <button class="btn btn-outline btn-xs flex-1" id="btn-open-test-log">📋 Test Output Log</button>
               </div>
             </div>
           </div>
 
         </div>
+
+        <!-- Dashboard Subsystem Quick-Nav Cards -->
+        <div class="tab-summary-section">
+          <div class="card-header mb-2">
+            <span class="card-subtitle">DIRECT ACCESS HUD</span>
+            <h3>Subsystem Quick-Nav Hub</h3>
+          </div>
+          <div class="tab-summary-grid">
+            
+            <div class="card glass-card tab-summary-card" data-quick-nav="tab-features">
+              <div class="tab-summary-header">
+                <span class="tab-icon">📋</span>
+                <h4>Feature Set Matrix</h4>
+              </div>
+              <p class="tab-summary-desc">Explore 23 indexed capabilities with dynamic subsystem filtering and runtime verification.</p>
+              <div class="tab-summary-meta">
+                <span class="text-dim">23 Modules Active</span>
+                <span class="nav-arrow-link">Open Matrix &rarr;</span>
+              </div>
+            </div>
+
+            <div class="card glass-card tab-summary-card" data-quick-nav="tab-cache">
+              <div class="tab-summary-header">
+                <span class="tab-icon">🗄️</span>
+                <h4>Cache &amp; Indexing Observatory</h4>
+              </div>
+              <p class="tab-summary-desc">File-centric card grid for deep AST symbol inspection, BLAKE3 hashes, and cache controls.</p>
+              <div class="tab-summary-meta">
+                <span class="text-dim">SQLite-WAL Enabled</span>
+                <span class="nav-arrow-link">Inspect Cache &rarr;</span>
+              </div>
+            </div>
+
+            <div class="card glass-card tab-summary-card" data-quick-nav="tab-agents">
+              <div class="tab-summary-header">
+                <span class="tab-icon">🕸️</span>
+                <h4>Agent Network Directed Graph</h4>
+              </div>
+              <p class="tab-summary-desc">Interactive topology graph showing 6 worker personas, slide-out inspector, and event stream.</p>
+              <div class="tab-summary-meta">
+                <span class="text-dim">6 Active Workers</span>
+                <span class="nav-arrow-link">View Network &rarr;</span>
+              </div>
+            </div>
+
+            <div class="card glass-card tab-summary-card" data-quick-nav="tab-chat">
+              <div class="tab-summary-header">
+                <span class="tab-icon">💬</span>
+                <h4>Router Agent Chat Hub</h4>
+              </div>
+              <p class="tab-summary-desc">Dedicated single-agent conversational workspace with real-time token tracking &amp; history.</p>
+              <div class="tab-summary-meta">
+                <span class="text-dim">Router Active</span>
+                <span class="nav-arrow-link">Start Chat &rarr;</span>
+              </div>
+            </div>
+
+            <div class="card glass-card tab-summary-card dev-only" data-quick-nav="tab-playground">
+              <div class="tab-summary-header">
+                <span class="tab-icon">🔬</span>
+                <h4>Feature Probes &amp; Testbed <span class="badge badge-dev-pill">DEV</span></h4>
+              </div>
+              <p class="tab-summary-desc">Interactive execution playground for Router, AST skeletonizer, and blast radius analyzers.</p>
+              <div class="tab-summary-meta">
+                <span class="text-violet">Developer Suite</span>
+                <span class="nav-arrow-link">Launch Probes &rarr;</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </section>
 
       <!-- ================= TAB 2: COMPLETE FEATURE MATRIX ================= -->
@@ -303,7 +389,7 @@
         </div>
 
         <div class="features-grid" id="features-grid-container">
-          <!-- Dynamically populated via JS -->
+          <!-- Dynamically populated via JS with in-card probes and action triggers -->
         </div>
       </section>
 
@@ -312,35 +398,37 @@
         <div class="cache-inspector-container glass-card">
           <div class="inspector-header">
             <div>
-              <h3>SQLite-WAL Live Table Viewer</h3>
-              <p class="text-muted">Querying live data records directly from <code>.agent/cache/repomap.db</code></p>
+              <h3>Cache &amp; Indexing Live Observatory</h3>
+              <p class="text-muted">Inspect repository file AST cards and tables from <code>.agent/cache/repomap.db</code></p>
             </div>
-            <div class="table-selector">
-              <label>Inspect Table:</label>
-              <select id="select-cache-table" class="dark-select">
-                <option value="parse_cache">parse_cache (AST Tags &amp; Blake3)</option>
-                <option value="export_registry">export_registry (Public Signatures)</option>
-                <option value="symbol_references">symbol_references (Cross-file Links)</option>
-                <option value="wildcard_dependencies">wildcard_dependencies (Barrel Hops)</option>
-              </select>
-              <button class="btn btn-outline" id="btn-refresh-cache-table">Refresh</button>
+            <div class="cache-controls">
+              <button class="btn btn-outline" id="btn-manual-clear">Manual Clear</button>
+              <button class="btn btn-outline" id="btn-regen-cache">Regen Cache</button>
+              <button class="btn btn-outline" id="btn-rebuild-graph">Rebuild Graph</button>
+              <span class="cache-access-counter" id="cache-access-counter">Accesses: 0</span>
+            </div>
+            <div class="table-selector flex-between">
+              <div class="search-box flex-1 mr-2">
+                <input type="text" id="cache-file-search-input" class="dark-input" placeholder="Filter cached files by path or name...">
+              </div>
+              <div>
+                <label>Sample Table:</label>
+                <select id="select-cache-table" class="dark-select">
+                  <option value="parse_cache">parse_cache (AST Tags &amp; Blake3)</option>
+                  <option value="export_registry">export_registry (Public Signatures)</option>
+                  <option value="symbol_references">symbol_references (Cross-file Links)</option>
+                  <option value="wildcard_dependencies">wildcard_dependencies (Barrel Hops)</option>
+                </select>
+                <button class="btn btn-outline" id="btn-refresh-cache-table">Refresh</button>
+              </div>
             </div>
           </div>
 
-          <div class="table-responsive">
-            <table class="data-table" id="cache-data-table">
-              <thead>
-                <tr id="cache-table-head"><th>Loading columns...</th></tr>
-              </thead>
-              <tbody id="cache-table-body">
-                <tr><td>Loading data...</td></tr>
-              </tbody>
-            </table>
-          </div>
+          <div class="file-card-grid" id="file-card-grid"></div>
         </div>
       </section>
 
-      <!-- ================= TAB 4: INTERACTIVE FEATURE PROBES ================= -->
+      <!-- ================= TAB 4: INTERACTIVE FEATURE PROBES (STANDALONE) ================= -->
       <section id="tab-playground" class="tab-panel">
         <div class="playground-layout">
           
@@ -449,76 +537,37 @@
         </div>
       </section>
 
-      <!-- ================= TAB 5: BLUEPRINT ================= -->
-      <section id="tab-blueprint" class="tab-panel">
-        <div class="blueprint-card glass-card">
-          <div class="card-header">
-            <span class="card-subtitle">ARCHITECTURE &amp; DATA FLOW</span>
-            <h3>Three-Tier Execution Architecture &amp; Subsystem Topology</h3>
-          </div>
-          <div class="card-body">
-            <div class="pipeline-flow-diagram">
-              <div class="pipeline-step">
-                <div class="step-badge">USER REQUEST</div>
-                <div class="step-card">
-                  <h4>Query Ingestion</h4>
-                  <p>Developers dispatch queries via CLI or IDE prompt interface.</p>
-                </div>
-              </div>
-              <div class="step-connector">&rarr;</div>
-              <div class="pipeline-step">
-                <div class="step-badge tier-0-badge">TIER 0 FAST-PATH</div>
-                <div class="step-card">
-                  <h4>HF Zero-Shot Triage</h4>
-                  <p>Evaluates query via <code>facebook/bart-large-mnli</code>. If confidence &ge; 0.85, skips Vertex AI.</p>
-                </div>
-              </div>
-              <div class="step-connector">&rarr;</div>
-              <div class="pipeline-step">
-                <div class="step-badge tier-1-badge">TIER 1 ROUTER</div>
-                <div class="step-card">
-                  <h4>Vertex AI Flash</h4>
-                  <p>Synthesizes <code>RoutingManifest</code> under $0.33/day circuit breaker.</p>
-                </div>
-              </div>
-              <div class="step-connector">&rarr;</div>
-              <div class="pipeline-step">
-                <div class="step-badge repomap-badge">REPOMAP ENGINE</div>
-                <div class="step-card">
-                  <h4>Knapsack Packing</h4>
-                  <p>Packs AST skeletons with Personalized PageRank into exact token budget.</p>
-                </div>
-              </div>
-              <div class="step-connector">&rarr;</div>
-              <div class="pipeline-step">
-                <div class="step-badge tier-2-badge">TIER 2 EXECUTION</div>
-                <div class="step-card">
-                  <h4>Antigravity CLI</h4>
-                  <p>Autonomous multi-file edit, verification, and regression test loops.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= TAB: LIVE AGENT TRACKER ================= -->
+      <!-- ================= TAB: LIVE AGENT TRACKER & DIRECTED GRAPH ================= -->
       <section id="tab-agents" class="tab-panel">
         <div class="agent-tracker-layout">
           
-          <!-- Top Row: Workflow & Lifecycle State Header -->
+          <!-- Top Row: Directed Web Graph Canvas & Workflow Header -->
           <div class="card glass-card workflow-status-card">
             <div class="card-header flex-between">
               <div>
                 <span class="card-subtitle" id="agent-task-id">TASK-00000000</span>
-                <h3 id="agent-objective-title">Multi-Agent Workflow Tracker</h3>
+                <h3 id="agent-objective-title">Agent Network Directed Topology Graph</h3>
               </div>
               <div class="workflow-badge-group">
                 <span class="badge badge-info" id="agent-lifecycle-badge">STATE: INTAKE</span>
-                <button class="btn btn-primary btn-sm" id="btn-trigger-agent-step">Step Workflow Demo</button>
+                <button class="btn btn-primary btn-sm dev-only" id="btn-trigger-agent-step">Step Workflow Demo</button>
               </div>
             </div>
             
+            <!-- SVG / Canvas Directed Web Graph Visualization -->
+            <div class="network-graph-container mt-3" style="position: relative; width: 100%; min-height: 280px; background: rgba(5,8,16,0.8); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1rem;">
+              <svg id="agent-directed-graph-svg" width="100%" height="260" viewBox="0 0 900 260" preserveAspectRatio="xMidYMid meet">
+                <!-- SVG Directed Edges & Animated Flow Lines -->
+                <defs>
+                  <marker id="arrow-head" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(0, 240, 255, 0.7)"/>
+                  </marker>
+                </defs>
+                <g id="svg-edges-group"></g>
+                <g id="svg-nodes-group"></g>
+              </svg>
+            </div>
+
             <div class="lifecycle-pipeline mt-2" id="lifecycle-pipeline-nodes">
               <div class="lifecycle-step" data-step="INTAKE">INTAKE</div>
               <div class="step-arrow">&rarr;</div>
@@ -544,7 +593,7 @@
           <!-- Bottom Row: Terminal Event Stream & Subtask Execution List -->
           <div class="agent-bottom-grid">
             
-            <!-- Terminal Event Stream -->
+            <!-- Synchronized Unified Event Log Terminal -->
             <div class="card glass-card terminal-card">
               <div class="card-header flex-between">
                 <div>
@@ -574,15 +623,15 @@
         </div>
       </section>
 
-      <!-- ================= TAB: AGENT CHAT HUB ================= -->
+      <!-- ================= TAB: ROUTER AGENT CHAT HUB ================= -->
       <section id="tab-chat" class="tab-panel">
         <div class="chat-hub-layout">
           
           <!-- Chat Sidebar: Persona Selection & Context Attachment -->
           <div class="card glass-card chat-sidebar">
             <div class="card-header">
-              <span class="card-subtitle">PERSONA SELECTOR</span>
-              <h3>Agent Directives</h3>
+              <span class="card-subtitle">ROUTER DIRECTIVES</span>
+              <h3>Router Persona &amp; Options</h3>
             </div>
             <div class="card-body">
               <div class="persona-picker-list" id="chat-persona-list">
@@ -590,56 +639,8 @@
                 <div class="persona-pick-item active" data-persona="auto">
                   <div class="persona-icon-avatar auto-avatar">&#10024;</div>
                   <div class="persona-pick-meta">
-                    <span class="persona-pick-name">Auto-Dispatch (Router)</span>
+                    <span class="persona-pick-name">Router Agent (Auto)</span>
                     <span class="persona-pick-desc">Zero-Shot intent classification with budget guard</span>
-                  </div>
-                </div>
-
-                <div class="persona-pick-item" data-persona="orchestrator">
-                  <div class="persona-icon-avatar orch-avatar">&#128736;</div>
-                  <div class="persona-pick-meta">
-                    <span class="persona-pick-name">Orchestrator Supervisor</span>
-                    <span class="persona-pick-desc">Lifecycle coordinator &amp; budget circuit breaker</span>
-                  </div>
-                </div>
-
-                <div class="persona-pick-item" data-persona="planner">
-                  <div class="persona-icon-avatar planner-avatar">&#128506;</div>
-                  <div class="persona-pick-meta">
-                    <span class="persona-pick-name">DAG Architecture Planner</span>
-                    <span class="persona-pick-desc">Decomposes objectives into typed subtask DAGs</span>
-                  </div>
-                </div>
-
-                <div class="persona-pick-item" data-persona="coder">
-                  <div class="persona-icon-avatar coder-avatar">&#128187;</div>
-                  <div class="persona-pick-meta">
-                    <span class="persona-pick-name">Code Synthesis Agent</span>
-                    <span class="persona-pick-desc">Synthesizes atomic unified code diffs</span>
-                  </div>
-                </div>
-
-                <div class="persona-pick-item" data-persona="tester">
-                  <div class="persona-icon-avatar tester-avatar">&#129514;</div>
-                  <div class="persona-pick-meta">
-                    <span class="persona-pick-name">Automated Test Runner</span>
-                    <span class="persona-pick-desc">Assertion verification &amp; edge case execution</span>
-                  </div>
-                </div>
-
-                <div class="persona-pick-item" data-persona="reviewer">
-                  <div class="persona-icon-avatar reviewer-avatar">&#128065;</div>
-                  <div class="persona-pick-meta">
-                    <span class="persona-pick-name">Code Reviewer &amp; Auditor</span>
-                    <span class="persona-pick-desc">Security checks &amp; adversarial merge gatekeeper</span>
-                  </div>
-                </div>
-
-                <div class="persona-pick-item" data-persona="debugger">
-                  <div class="persona-icon-avatar debugger-avatar">&#128269;</div>
-                  <div class="persona-pick-meta">
-                    <span class="persona-pick-name">Root Cause Debugger</span>
-                    <span class="persona-pick-desc">Traceback localization &amp; targeted patch advice</span>
                   </div>
                 </div>
 
@@ -650,6 +651,31 @@
                 <span class="card-subtitle">CONTEXT ATTACHMENT</span>
                 <label class="form-label" for="chat-context-files">Focus Workspace Files (comma-separated):</label>
                 <input type="text" id="chat-context-files" class="dark-input font-mono" placeholder="meta_harness/orchestrator/config.py" value="meta_harness/orchestrator/config.py">
+              </div>
+
+              <!-- Execution Backend Selector -->
+              <div class="chat-backend-box mt-3" id="chat-backend-box">
+                <span class="card-subtitle">EXECUTION BACKEND</span>
+                <div class="backend-mode-grid" id="backend-mode-grid">
+                  <button class="backend-mode-btn" id="btn-backend-vertex" data-backend="vertex">
+                    <div class="backend-mode-icon">⚡</div>
+                    <div class="backend-mode-info">
+                      <span class="backend-mode-name">Vertex AI</span>
+                      <span class="backend-mode-desc">Gemini Flash Router</span>
+                    </div>
+                  </button>
+                  <button class="backend-mode-btn active" id="btn-backend-antigravity" data-backend="antigravity">
+                    <div class="backend-mode-icon">🚀</div>
+                    <div class="backend-mode-info">
+                      <span class="backend-mode-name">Antigravity Only</span>
+                      <span class="backend-mode-desc">AGY CLI Direct</span>
+                    </div>
+                  </button>
+                </div>
+                <div class="antigravity-mode-indicator antigravity-active" id="antigravity-mode-indicator">
+                  <span class="pulse-indicator"></span>
+                  <span id="antigravity-mode-label">🚀 ANTIGRAVITY ONLY MODE</span>
+                </div>
               </div>
 
               <div class="chat-quick-actions mt-3">
@@ -669,8 +695,8 @@
           <div class="card glass-card chat-main-feed">
             <div class="card-header flex-between">
               <div class="chat-active-persona-header">
-                <span class="card-subtitle">CONVERSATION FEED</span>
-                <h3 id="chat-target-display">Agent Chat: Auto-Dispatch</h3>
+                <span class="card-subtitle">STREAMLINED CHAT HUB</span>
+                <h3 id="chat-target-display">Router Agent Workspace</h3>
               </div>
               <div class="chat-header-actions">
                 <span class="badge badge-info font-mono" id="chat-model-badge">gemini-2.0-flash</span>
@@ -687,7 +713,7 @@
             <div class="chat-input-toolbar">
               <form id="chat-input-form" class="chat-input-form">
                 <div class="chat-input-wrapper">
-                  <textarea id="chat-prompt-input" class="chat-textarea" placeholder="Send an instruction, architecture question, code request, or error log to the agent... (Shift+Enter for newline, Enter to send)" rows="2"></textarea>
+                  <textarea id="chat-prompt-input" class="chat-textarea" placeholder="Send an instruction, architecture question, code request, or error log to the Router Agent... (Shift+Enter for newline, Enter to send)" rows="2"></textarea>
                 </div>
                 <div class="chat-input-controls">
                   <div class="chat-hints">
@@ -740,6 +766,167 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Model Selection Modal -->
+    <div id="model-select-modal" class="modal-backdrop">
+      <div class="modal-content glass-card">
+        <div class="modal-header">
+          <div>
+            <span class="card-subtitle">CONFIG MANAGER</span>
+            <h3>Model Vendor &amp; Active Model Selection</h3>
+          </div>
+          <button class="modal-close" id="model-modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group mb-3">
+            <label>Select Active Router Model Tier:</label>
+            <select id="select-active-vendor-model" class="dark-select w-100">
+              <option value="google/gemini-2.0-flash">google/gemini-2.0-flash (Tier 1 Default)</option>
+              <option value="google/gemini-2.5-flash">google/gemini-2.5-flash (Tier 1 High-Capacity)</option>
+              <option value="google/gemini-2.0-flash-lite">google/gemini-2.0-flash-lite (Ultra Fast)</option>
+              <option value="facebook/bart-large-mnli">facebook/bart-large-mnli (Tier 0 Zero-Shot)</option>
+              <option value="antigravity/default">antigravity/default (Tier 2 Local CLI)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary w-100" id="btn-save-model-selection">Save Model Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quota Breakdown Modal -->
+    <div id="quota-modal" class="modal-backdrop">
+      <div class="modal-content glass-card">
+        <div class="modal-header">
+          <div>
+            <span class="card-subtitle">ORCHESTRATOR GUARDRAIL</span>
+            <h3>Daily Quota &amp; Circuit Breaker Breakdown</h3>
+          </div>
+          <button class="modal-close" id="quota-modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="quota-modal-stats-grid mb-3">
+            <div>
+              <span class="text-dim">Baseline Daily Cap:</span>
+              <div class="font-mono text-cyan" id="qmodal-baseline">$0.3300 / day</div>
+            </div>
+            <div>
+              <span class="text-dim">Calculated Daily Spend:</span>
+              <div class="font-mono text-emerald" id="qmodal-spend">$0.0000</div>
+            </div>
+            <div>
+              <span class="text-dim">Token Budget Ceiling:</span>
+              <div class="font-mono" id="qmodal-quota">2,000 tokens</div>
+            </div>
+          </div>
+          <button class="btn btn-warning w-100" id="btn-reset-quota">Reset Daily Spend Counter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- File Inspection Modal -->
+    <div id="file-inspect-modal" class="modal-backdrop">
+      <div class="modal-content glass-card" style="max-width: 800px;">
+        <div class="modal-header">
+          <div>
+            <span class="card-subtitle">CACHE AST OBSERVER</span>
+            <h3 id="modal-file-title">Inspect File AST</h3>
+          </div>
+          <button class="modal-close" id="modal-file-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <pre id="modal-file-content" class="code-preview" style="max-height: 400px; overflow-y: auto;"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test Runner & Diagnostic Log Modal (Dev-Mode) -->
+    <div id="test-runner-modal" class="modal-backdrop">
+      <div class="modal-content glass-card test-modal-content" style="max-width: 880px;">
+        <div class="modal-header">
+          <div>
+            <span class="card-subtitle">TEST ENGINE &amp; DIAGNOSTIC RUNNER <span class="badge badge-dev-pill">DEV</span></span>
+            <h3 id="test-modal-title">Pytest Suite &amp; Verification Terminal</h3>
+          </div>
+          <button class="modal-close" id="test-modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="test-modal-stats-bar flex-between mb-3">
+            <div class="test-stat-group">
+              <span class="stat-label">STATUS:</span>
+              <span class="badge badge-success" id="test-modal-status">SUCCESS</span>
+            </div>
+            <div class="test-stat-group">
+              <span class="stat-label">DURATION:</span>
+              <span class="stat-value font-mono text-cyan" id="test-modal-duration">1.41 s</span>
+            </div>
+            <div class="test-stat-group">
+              <span class="stat-label">ASSERTIONS:</span>
+              <span class="stat-value font-mono text-emerald" id="test-modal-assertions">73 / 73 Passed</span>
+            </div>
+            <div class="test-modal-actions">
+              <button class="btn btn-primary btn-sm" id="btn-modal-run-pytest">▶️ Run Suite</button>
+              <button class="btn btn-outline btn-sm" id="btn-modal-fix-tests">⚡ Fix (LLM)</button>
+            </div>
+          </div>
+          <div class="test-terminal-container">
+            <div class="test-terminal-header flex-between mb-2">
+              <span class="font-mono text-dim">// Pytest Terminal Execution Logs</span>
+              <button class="btn btn-outline btn-xs" id="btn-clear-test-terminal">Clear Output</button>
+            </div>
+            <pre id="test-modal-log-content" class="code-preview test-terminal-output font-mono" style="max-height: 380px; overflow-y: auto;">// Pytest output ready. Click 'Run Suite' above to execute tests.</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent Inspector Slide-Out Drawer -->
+    <div id="agent-inspector-drawer" class="drawer-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 999; backdrop-filter: blur(4px);">
+      <div class="drawer-panel glass-card" style="position: absolute; right: 0; top: 0; bottom: 0; width: 440px; padding: 1.5rem; overflow-y: auto; border-left: 1px solid var(--border-active);">
+        <div class="flex-between mb-3">
+          <div>
+            <span class="card-subtitle" id="drawer-agent-id">AGENT INSPECTOR</span>
+            <h3 id="drawer-agent-name">Agent Persona</h3>
+          </div>
+          <button class="modal-close" id="drawer-close-btn">&times;</button>
+        </div>
+        
+        <div class="form-group mb-3">
+          <label>Active Agent Status:</label>
+          <span class="badge badge-info" id="drawer-agent-status">ACTIVE</span>
+        </div>
+
+        <div class="form-group mb-3">
+          <label>Model Selector:</label>
+          <select id="drawer-model-select" class="dark-select w-100">
+            <option value="antigravity/gemini-3-pro-preview">antigravity/gemini-3-pro-preview</option>
+            <option value="google/gemini-2.0-flash">google/gemini-2.0-flash</option>
+            <option value="openai/gpt-5.1">openai/gpt-5.1</option>
+          </select>
+        </div>
+
+        <div class="form-group mb-3">
+          <label>Current Task Prompt:</label>
+          <textarea id="drawer-task-input" class="dark-input font-mono" rows="3"></textarea>
+        </div>
+
+        <div class="drawer-actions flex-between mb-3">
+          <button class="btn btn-outline btn-sm" id="btn-drawer-edit-task">Update Task</button>
+          <button class="btn btn-primary btn-sm" id="btn-drawer-rerun">Re-run Task</button>
+          <button class="btn btn-danger btn-sm" id="btn-drawer-cancel">Cancel Task</button>
+        </div>
+
+        <div class="history-box">
+          <span class="card-subtitle">EXECUTION HISTORY</span>
+          <div id="drawer-history-list" class="font-mono text-muted" style="font-size: 0.75rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Banner -->
+    <div id="toast-banner" class="toast-banner">
+      <span class="toast-icon" id="toast-icon">ℹ️</span>
+      <span id="toast-message">Notification message</span>
     </div>
 
     <!-- Status Footer -->

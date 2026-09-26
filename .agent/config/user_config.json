@@ -1,0 +1,83 @@
+{
+  "active_vendor_models": [
+    "antigravity/gemini-3-pro-preview",
+    "antigravity/antigravity-default",
+    "antigravity",
+    "openai",
+    "vertex",
+    "huggingface"
+  ],
+  "active_backend": "antigravity/gemini-3-pro-preview",
+  "antigravity": {
+    "api_keys": [
+      "",
+      ""
+    ],
+    "models": {
+      "gemini-3-pro-preview": {
+        "daily_quota": 1000,
+        "max_output_tokens": 100000,
+        "max_thinking_tokens": 10000,
+        "rate_limit": 100
+      },
+      "antigravity-default": {
+        "daily_quota": 5000,
+        "max_output_tokens": 128000,
+        "max_thinking_tokens": 8000,
+        "rate_limit": 120
+      }
+    }
+  },
+  "openai": {
+    "api_keys": [
+      "",
+      ""
+    ],
+    "models": {
+      "gpt-5.1": {
+        "daily_quota": 1000,
+        "max_output_tokens": 100000,
+        "max_thinking_tokens": 10000,
+        "rate_limit": 100
+      },
+      "gpt-4o": {
+        "daily_quota": 2000,
+        "max_output_tokens": 16384,
+        "max_thinking_tokens": 0,
+        "rate_limit": 200
+      }
+    }
+  },
+  "vertex": {
+    "api_keys": [
+      ""
+    ],
+    "models": {
+      "gemini-2.0-flash": {
+        "daily_quota": 1500,
+        "max_output_tokens": 64000,
+        "max_thinking_tokens": 8000,
+        "rate_limit": 150
+      },
+      "gemini-2.5-flash": {
+        "daily_quota": 1000,
+        "max_output_tokens": 64000,
+        "max_thinking_tokens": 8000,
+        "rate_limit": 100
+      }
+    }
+  },
+  "huggingface": {
+    "api_keys": [
+      ""
+    ],
+    "models": {
+      "facebook/bart-large-mnli": {
+        "daily_quota": 5000,
+        "max_output_tokens": 4096,
+        "max_thinking_tokens": 0,
+        "rate_limit": 300
+      }
+    }
+  }
+}

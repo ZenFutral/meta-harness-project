@@ -28,10 +28,12 @@ class Phase8Tests(unittest.TestCase):
         self.assertEqual(router.model_id_for_persona("orchestrator"), "gemini-2.0-flash-lite")
 
     def test_step_8_3_llm_call_daily_quota_circuit_breaker(self):
+        import time
+        today = time.strftime("%Y-%m-%d")
         tmp_dir = tempfile.TemporaryDirectory()
         quota_file = Path(tmp_dir.name) / "quota.json"
         # Set cost above $0.33/day cap
-        quota_file.write_text('{"date": "2026-09-25", "tokens": 10000000, "cost": 0.50}')
+        quota_file.write_text(f'{{"date": "{today}", "tokens": 10000000, "cost": 0.50}}')
 
         orig_quota = budget_mod.QUOTA_FILE
         budget_mod.QUOTA_FILE = quota_file

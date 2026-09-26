@@ -33,11 +33,13 @@ MODELS: dict[str, str] = {
 # Antigravity subscription-tier alternatives (used when BACKEND="antigravity")
 MODELS_ANTIGRAVITY: dict[str, str] = {
     "orchestrator": "antigravity-default",
-    "planner":      "gemini-2.5-pro",
-    "coder":        "antigravity-default",
-    "tester":       "antigravity-default",
-    "reviewer":     "deepseek-r1",
-    "debugger":     "deepseek-r1",
+    "planner":      "gemini-3-pro-preview",
+    "coder":        "gemini-3-pro-preview",
+    "tester":       "gemini-3-pro-preview",
+    "reviewer":     "gemini-3-pro-preview",
+    "debugger":     "gemini-3-pro-preview",
+    "flash":        "antigravity-default",
+    "pro":          "gemini-3-pro-preview",
 }
 
 # ---------------------------------------------------------------------------

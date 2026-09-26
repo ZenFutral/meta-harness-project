@@ -84,7 +84,7 @@ def dispatch_agent_chat(
     message: str,
     target_persona: str = "auto",
     context_files: Optional[List[str]] = None,
-    backend: str = "vertex"
+    backend: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Dispatches a user query to a selected agent persona or uses the Router to pick the persona.
@@ -92,6 +92,13 @@ def dispatch_agent_chat(
     """
     if not message or not message.strip():
         return {"success": False, "error": "Message content cannot be empty."}
+
+    if not backend:
+        try:
+            from meta_harness.router.vendor_config import get_active_backend
+            backend = get_active_backend()
+        except Exception:
+            backend = "vertex"
 
     user_msg_id = f"user_{int(time.time() * 1000)}"
     user_entry = {

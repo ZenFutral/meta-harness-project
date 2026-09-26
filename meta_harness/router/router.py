@@ -47,7 +47,7 @@ class BaseRouter:
 class ModelRouter(BaseRouter):
     """Multi-tier router for SWE orchestration and Repomap."""
 
-    def __init__(self, backend: str = "vertex") -> None:
+    def __init__(self, backend: str = "antigravity") -> None:
         cfg = _get_config()
         self._backend = backend
         self._model_map = cfg.MODELS_ANTIGRAVITY if backend == "antigravity" else cfg.MODELS
