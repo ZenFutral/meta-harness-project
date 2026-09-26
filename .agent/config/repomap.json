@@ -1,0 +1,7 @@
+{
+  "max_tokens": 2048,
+  "pagerank_alpha": 0.85,
+  "pagerank_beta": 0.85,
+  "max_depth": 3,
+  "max_fanout": 10
+}

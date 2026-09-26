@@ -1,0 +1,47 @@
+{
+  "tools": {
+    "repo_map_summary": {
+      "description": "Generate a summary of the repository map within a token budget.",
+      "parameters": {
+        "budget_tokens": {
+          "type": "integer",
+          "default": 2048,
+          "description": "Maximum number of tokens allowed for the summary output."
+        },
+        "focus_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Optional list of file paths to prioritize in the summary."
+        }
+      }
+    },
+    "get_symbol_hierarchy": {
+      "description": "Return the inheritance/interface hierarchy for a given symbol.",
+      "parameters": {
+        "symbol_name": { "type": "string", "description": "Fully qualified name of the symbol (e.g., module.Class)." },
+        "direction": {
+          "type": "string",
+          "enum": ["upstream", "downstream", "both"],
+          "default": "both",
+          "description": "Traversal direction: ancestors, descendants, or both."
+        },
+        "max_depth": {
+          "type": "integer",
+          "default": 3,
+          "description": "Maximum depth to explore in the hierarchy."
+        }
+      }
+    },
+    "get_schema_registry": {
+      "description": "Retrieve the full data‑contract/schema registry produced by the schema facet.",
+      "parameters": {}
+    },
+    "resolve_imports": {
+      "description": "Resolve import relationships between two files, returning import paths and any circular dependencies.",
+      "parameters": {
+        "source_file": { "type": "string", "description": "Path to the file that performs the import." },
+        "target_file": { "type": "string", "description": "Path to the file being imported." }
+      }
+    }
+  }
+}

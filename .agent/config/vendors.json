@@ -1,0 +1,26 @@
+{
+  "vendors": {
+    "huggingface": {
+      "name": "Hugging Face Serverless",
+      "enabled": true,
+      "primary_model": "facebook/bart-large-mnli",
+      "role": "Tier 0 Zero-Shot Intent Classification",
+      "tier": "Tier 0 Triage"
+    },
+    "vertex": {
+      "name": "Vertex AI (Gemini Flash)",
+      "enabled": true,
+      "primary_model": "gemini-2.0-flash",
+      "role": "Tier 1 Router & Manifest Synthesizer ($0.33/day Cap)",
+      "tier": "Tier 1 Router"
+    },
+    "antigravity": {
+      "name": "Google Antigravity CLI",
+      "enabled": true,
+      "primary_model": "antigravity-default",
+      "role": "Tier 2 Deep Agentic Execution & Pro Subscription",
+      "tier": "Tier 2 Execution"
+    }
+  },
+  "active_backend": "vertex"
+}

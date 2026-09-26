@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meta-Harness // System Monitoring & Feature Observatory</title>
+  <link rel="stylesheet" href="/app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Observatory Header -->
+    <header class="app-header">
+      <div class="header-branding">
+        <div class="logo-mark">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <div class="branding-text">
+          <h1>META-HARNESS</h1>
+          <span class="system-tag">SYSTEM OBSERVATORY &amp; FEATURE READOUT</span>
+        </div>
+      </div>
+
+      <div class="header-status-ribbon">
+        <div class="status-pill" id="global-status-pill">
+          <span class="pulse-indicator"></span>
+          <span id="global-status-text">INITIALIZING...</span>
+        </div>
+        <div class="header-metric">
+          <span class="metric-label">UPTIME</span>
+          <span class="metric-val" id="val-uptime">0s</span>
+        </div>
+        <div class="header-metric">
+          <span class="metric-label">DAILY QUOTA SPEND</span>
+          <span class="metric-val" id="val-quota-spend">$0.000 / $0.33</span>
+        </div>
+        <div class="auto-refresh-toggle">
+          <label class="switch">
+            <input type="checkbox" id="auto-refresh-check" checked>
+            <span class="slider round"></span>
+          </label>
+          <span class="toggle-label">LIVE SYNC (2s)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="subsystem-nav">
+      <button class="nav-tab active" data-tab="tab-overview">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        System Vitals &amp; HUD
+      </button>
+      <button class="nav-tab" data-tab="tab-features">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Feature Set Matrix (<span id="tab-feat-count">23</span>)
+      </button>
+      <button class="nav-tab" data-tab="tab-cache">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+        SQLite-WAL &amp; Graph Cache
+      </button>
+      <button class="nav-tab" data-tab="tab-playground">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        Interactive Feature Probes
+      </button>
+      <button class="nav-tab" data-tab="tab-agents">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Live Agent Tracker (<span id="nav-agent-active-count">6</span>)
+      </button>
+      <button class="nav-tab" data-tab="tab-chat">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        Agent Chat Hub
+      </button>
+      <button class="nav-tab" data-tab="tab-blueprint">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        Subsystem Blueprint
+      </button>
+    </nav>
+
+    <!-- Main Content Stage -->
+    <main class="content-stage">
+
+      <!-- ================= TAB 1: SYSTEM VITALS ================= -->
+      <section id="tab-overview" class="tab-panel active">
+        <div class="hud-grid">
+          
+          <!-- Card: Model Vendor Provider Toggles -->
+          <div class="card glass-card hud-card" id="hud-card-vendors">
+            <div class="card-header">
+              <span class="card-subtitle">MULTI-TIER ROUTER &amp; PROVIDERS</span>
+              <h3>Model Vendor Configuration</h3>
+            </div>
+            <div class="card-body">
+              <div class="vendor-list">
+                
+                <div class="vendor-item" id="vendor-item-huggingface">
+                  <div class="vendor-info">
+                    <span class="vendor-name">Hugging Face Serverless</span>
+                    <span class="vendor-role">Tier 0 Zero-Shot Intent Classifier</span>
+                  </div>
+                  <div class="vendor-action">
+                    <span class="badge badge-info" id="badge-vendor-hf">ENABLED</span>
+                    <label class="switch">
+                      <input type="checkbox" class="vendor-toggle" data-vendor="huggingface" id="toggle-vendor-hf" checked>
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="vendor-item" id="vendor-item-vertex">
+                  <div class="vendor-info">
+                    <span class="vendor-name">Vertex AI (Gemini Flash)</span>
+                    <span class="vendor-role">Tier 1 Cloud Router ($0.33/day Cap)</span>
+                  </div>
+                  <div class="vendor-action">
+                    <span class="badge badge-info" id="badge-vendor-vertex">ENABLED</span>
+                    <label class="switch">
+                      <input type="checkbox" class="vendor-toggle" data-vendor="vertex" id="toggle-vendor-vertex" checked>
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="vendor-item" id="vendor-item-antigravity">
+                  <div class="vendor-info">
+                    <span class="vendor-name">Google Antigravity CLI</span>
+                    <span class="vendor-role">Tier 2 Deep Agentic Execution</span>
+                  </div>
+                  <div class="vendor-action">
+                    <span class="badge badge-info" id="badge-vendor-antigravity">ENABLED</span>
+                    <label class="switch">
+                      <input type="checkbox" class="vendor-toggle" data-vendor="antigravity" id="toggle-vendor-antigravity" checked>
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Budget & Circuit Breaker -->
+          <div class="card glass-card hud-card" id="hud-card-budget">
+            <div class="card-header">
+              <span class="card-subtitle">ORCHESTRATOR GUARDRAIL</span>
+              <h3>Daily Quota &amp; Circuit Breaker</h3>
+            </div>
+            <div class="card-body gauge-body">
+              <div class="radial-gauge-container">
+                <svg viewBox="0 0 100 100" class="radial-gauge">
+                  <circle class="gauge-bg" cx="50" cy="50" r="42" />
+                  <circle class="gauge-fill" id="gauge-spend-circle" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="gauge-label-overlay">
+                  <span class="gauge-pct" id="gauge-spend-pct">0%</span>
+                  <span class="gauge-sub">USED OF $0.33</span>
+                </div>
+              </div>
+              <div class="hud-stats-list">
+                <div class="stat-row">
+                  <span class="stat-label">Daily Ceiling</span>
+                  <span class="stat-value font-mono">$0.3300 / day</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Calculated Spend</span>
+                  <span class="stat-value font-mono" id="stat-spend-cost">$0.000000</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Tracked Input Tokens</span>
+                  <span class="stat-value font-mono" id="stat-spend-tokens">0</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Circuit Breaker</span>
+                  <span class="badge" id="badge-circuit-breaker">NORMAL</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Context Ingestion & Token Packing -->
+          <div class="card glass-card hud-card">
+            <div class="card-header">
+              <span class="card-subtitle">CONTEXTUALIZE ENGINE</span>
+              <h3>Context Budget &amp; Token Packing</h3>
+            </div>
+            <div class="card-body">
+              <div class="progress-container">
+                <div class="progress-labels">
+                  <span>Bundled vs Limit</span>
+                  <span class="font-mono" id="label-token-util">0 / 7000 tokens (0%)</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="bar-token-util" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="hud-stats-list mt-3">
+                <div class="stat-row">
+                  <span class="stat-label">Total Ingested</span>
+                  <span class="stat-value font-mono" id="stat-ingested-tokens">0</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Total Bundled</span>
+                  <span class="stat-value font-mono" id="stat-bundled-tokens">0</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Active Git Branch</span>
+                  <span class="stat-value font-mono text-cyan" id="stat-active-branch">unknown</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Context Engine Status</span>
+                  <span class="badge badge-success" id="badge-engine-status">ONLINE</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: SQLite-WAL Cache Health -->
+          <div class="card glass-card hud-card">
+            <div class="card-header">
+              <span class="card-subtitle">REPOMAP TIER 0 STORAGE</span>
+              <h3>SQLite-WAL Dual-Tier Cache</h3>
+            </div>
+            <div class="card-body">
+              <div class="hud-stats-list">
+                <div class="stat-row">
+                  <span class="stat-label">Database File</span>
+                  <span class="stat-value font-mono">.agent/cache/repomap.db</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">WAL Mode Active</span>
+                  <span class="badge badge-success" id="stat-wal-mode">WAL ENABLED</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Database Size</span>
+                  <span class="stat-value font-mono text-cyan" id="stat-db-size">0.00 MB</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Cached Parsed Files</span>
+                  <span class="stat-value font-mono" id="stat-parse-cache-count">0</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Symbol References</span>
+                  <span class="stat-value font-mono" id="stat-symbol-ref-count">0</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Export Registries</span>
+                  <span class="stat-value font-mono" id="stat-export-reg-count">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Test Verification & Regressions -->
+          <div class="card glass-card hud-card">
+            <div class="card-header">
+              <span class="card-subtitle">VERIFICATION PIPELINE</span>
+              <h3>Automated Test Health</h3>
+            </div>
+            <div class="card-body">
+              <div class="hud-stats-list">
+                <div class="stat-row">
+                  <span class="stat-label">Suite Status</span>
+                  <span class="badge badge-success" id="stat-test-status">SUCCESS</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Last Execution</span>
+                  <span class="stat-value font-mono" id="stat-test-time">N/A</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Duration</span>
+                  <span class="stat-value font-mono" id="stat-test-duration">0 ms</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Passed Tests</span>
+                  <span class="stat-value font-mono text-emerald">43 / 43 Passed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: COMPLETE FEATURE MATRIX ================= -->
+      <section id="tab-features" class="tab-panel">
+        <div class="matrix-controls glass-card">
+          <div class="search-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="feature-search-input" placeholder="Search capabilities, modules, symbol IDs...">
+          </div>
+          <div class="filter-pills" id="filter-pills">
+            <button class="filter-btn active" data-filter="ALL">All Subsystems</button>
+            <button class="filter-btn" data-filter="Orchestrator">Orchestrator (4)</button>
+            <button class="filter-btn" data-filter="Router">Router (4)</button>
+            <button class="filter-btn" data-filter="Contextualize">Contextualize (3)</button>
+            <button class="filter-btn" data-filter="Repomap">Repomap (13)</button>
+          </div>
+        </div>
+
+        <div class="features-grid" id="features-grid-container">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: SQLITE & CACHE INSPECTOR ================= -->
+      <section id="tab-cache" class="tab-panel">
+        <div class="cache-inspector-container glass-card">
+          <div class="inspector-header">
+            <div>
+              <h3>SQLite-WAL Live Table Viewer</h3>
+              <p class="text-muted">Querying live data records directly from <code>.agent/cache/repomap.db</code></p>
+            </div>
+            <div class="table-selector">
+              <label>Inspect Table:</label>
+              <select id="select-cache-table" class="dark-select">
+                <option value="parse_cache">parse_cache (AST Tags &amp; Blake3)</option>
+                <option value="export_registry">export_registry (Public Signatures)</option>
+                <option value="symbol_references">symbol_references (Cross-file Links)</option>
+                <option value="wildcard_dependencies">wildcard_dependencies (Barrel Hops)</option>
+              </select>
+              <button class="btn btn-outline" id="btn-refresh-cache-table">Refresh</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="cache-data-table">
+              <thead>
+                <tr id="cache-table-head"><th>Loading columns...</th></tr>
+              </thead>
+              <tbody id="cache-table-body">
+                <tr><td>Loading data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: INTERACTIVE FEATURE PROBES ================= -->
+      <section id="tab-playground" class="tab-panel">
+        <div class="playground-layout">
+          
+          <!-- Probe 1: Router -->
+          <div class="card glass-card probe-card">
+            <div class="card-header">
+              <span class="card-subtitle">ROUTER PROBE (ROUT-01 / ROUT-02)</span>
+              <h3>Live Intent Router &amp; Manifest Generator</h3>
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-2">Test intent classification and verify whether it takes the fast-path (HF Zero-Shot) or fallback (Vertex AI Flash).</p>
+              <div class="form-group">
+                <label>User Request / Query Prompt:</label>
+                <input type="text" id="probe-route-prompt" class="dark-input" value="Refactor database schema for user profiles and verify dependencies">
+              </div>
+              <div class="form-group">
+                <label>Focus Files (comma separated):</label>
+                <input type="text" id="probe-route-focus" class="dark-input" value="meta-harness/orchestrator/orchestrator.py">
+              </div>
+              <button class="btn btn-primary" id="btn-run-route-probe">Execute Route Test</button>
+              
+              <div class="probe-output-box mt-3">
+                <div class="output-header">
+                  <span>Routing Decision Output</span>
+                  <span class="badge" id="probe-route-tier-badge">AWAITING RUN</span>
+                </div>
+                <pre class="code-preview" id="probe-route-output">// Click 'Execute Route Test' above</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Probe 2: Skeletonizer -->
+          <div class="card glass-card probe-card">
+            <div class="card-header">
+              <span class="card-subtitle">AST SKELETONIZER PROBE (REPO-07)</span>
+              <h3>AST Skeletonizer with Dynamic Pruning</h3>
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-2">Generate compact structural skeletons with budget-aware docstring elision.</p>
+              <div class="form-group">
+                <label>Repository Relative File Path:</label>
+                <input type="text" id="probe-skel-file" class="dark-input" value="meta-harness/orchestrator/budget.py">
+              </div>
+              <div class="form-group">
+                <div class="slider-header">
+                  <label>Token Budget Limit:</label>
+                  <span class="font-mono text-cyan" id="budget-slider-val">2048 tokens</span>
+                </div>
+                <input type="range" id="probe-skel-budget" min="512" max="8192" step="256" value="2048" class="dark-slider">
+                <div class="budget-modes">
+                  <span class="mode-tag">&le; 2048: Elide All</span>
+                  <span class="mode-tag">2049-4096: First Line</span>
+                  <span class="mode-tag">&ge; 4097: Full</span>
+                </div>
+              </div>
+              <button class="btn btn-primary" id="btn-run-skel-probe">Generate AST Skeleton</button>
+
+              <div class="probe-output-box mt-3">
+                <div class="output-header">
+                  <span>Structural Skeleton Output</span>
+                  <span class="badge badge-info" id="probe-skel-meta">-</span>
+                </div>
+                <pre class="code-preview skeleton-code" id="probe-skel-output">// Click 'Generate AST Skeleton' above</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Probe 3: Blast Radius -->
+          <div class="card glass-card probe-card">
+            <div class="card-header">
+              <span class="card-subtitle">BLAST RADIUS TRACER PROBE (REPO-09)</span>
+              <h3>Symbol Call Hierarchy &amp; Impact Analysis</h3>
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-2">Trace caller/callee paths and calculate change impact blast radius.</p>
+              <div class="form-group">
+                <label>Target Symbol Name:</label>
+                <input type="text" id="probe-blast-symbol" class="dark-input" value="check_and_update_budget">
+              </div>
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label>Direction:</label>
+                  <select id="probe-blast-dir" class="dark-select">
+                    <option value="both">Both (Upstream &amp; Downstream)</option>
+                    <option value="upstream">Upstream (Callers only)</option>
+                    <option value="downstream">Downstream (Callees only)</option>
+                  </select>
+                </div>
+                <div class="form-group flex-1">
+                  <label>Max Depth:</label>
+                  <input type="number" id="probe-blast-depth" class="dark-input" value="3" min="1" max="5">
+                </div>
+              </div>
+              <button class="btn btn-primary" id="btn-run-blast-probe">Trace Blast Radius</button>
+
+              <div class="probe-output-box mt-3">
+                <div class="output-header">
+                  <span>Impact Analysis Results</span>
+                  <span class="badge badge-info" id="probe-blast-meta">-</span>
+                </div>
+                <pre class="code-preview" id="probe-blast-output">// Click 'Trace Blast Radius' above</pre>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= TAB 5: BLUEPRINT ================= -->
+      <section id="tab-blueprint" class="tab-panel">
+        <div class="blueprint-card glass-card">
+          <div class="card-header">
+            <span class="card-subtitle">ARCHITECTURE &amp; DATA FLOW</span>
+            <h3>Three-Tier Execution Architecture &amp; Subsystem Topology</h3>
+          </div>
+          <div class="card-body">
+            <div class="pipeline-flow-diagram">
+              <div class="pipeline-step">
+                <div class="step-badge">USER REQUEST</div>
+                <div class="step-card">
+                  <h4>Query Ingestion</h4>
+                  <p>Developers dispatch queries via CLI or IDE prompt interface.</p>
+                </div>
+              </div>
+              <div class="step-connector">&rarr;</div>
+              <div class="pipeline-step">
+                <div class="step-badge tier-0-badge">TIER 0 FAST-PATH</div>
+                <div class="step-card">
+                  <h4>HF Zero-Shot Triage</h4>
+                  <p>Evaluates query via <code>facebook/bart-large-mnli</code>. If confidence &ge; 0.85, skips Vertex AI.</p>
+                </div>
+              </div>
+              <div class="step-connector">&rarr;</div>
+              <div class="pipeline-step">
+                <div class="step-badge tier-1-badge">TIER 1 ROUTER</div>
+                <div class="step-card">
+                  <h4>Vertex AI Flash</h4>
+                  <p>Synthesizes <code>RoutingManifest</code> under $0.33/day circuit breaker.</p>
+                </div>
+              </div>
+              <div class="step-connector">&rarr;</div>
+              <div class="pipeline-step">
+                <div class="step-badge repomap-badge">REPOMAP ENGINE</div>
+                <div class="step-card">
+                  <h4>Knapsack Packing</h4>
+                  <p>Packs AST skeletons with Personalized PageRank into exact token budget.</p>
+                </div>
+              </div>
+              <div class="step-connector">&rarr;</div>
+              <div class="pipeline-step">
+                <div class="step-badge tier-2-badge">TIER 2 EXECUTION</div>
+                <div class="step-card">
+                  <h4>Antigravity CLI</h4>
+                  <p>Autonomous multi-file edit, verification, and regression test loops.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB: LIVE AGENT TRACKER ================= -->
+      <section id="tab-agents" class="tab-panel">
+        <div class="agent-tracker-layout">
+          
+          <!-- Top Row: Workflow & Lifecycle State Header -->
+          <div class="card glass-card workflow-status-card">
+            <div class="card-header flex-between">
+              <div>
+                <span class="card-subtitle" id="agent-task-id">TASK-00000000</span>
+                <h3 id="agent-objective-title">Multi-Agent Workflow Tracker</h3>
+              </div>
+              <div class="workflow-badge-group">
+                <span class="badge badge-info" id="agent-lifecycle-badge">STATE: INTAKE</span>
+                <button class="btn btn-primary btn-sm" id="btn-trigger-agent-step">Step Workflow Demo</button>
+              </div>
+            </div>
+            
+            <div class="lifecycle-pipeline mt-2" id="lifecycle-pipeline-nodes">
+              <div class="lifecycle-step" data-step="INTAKE">INTAKE</div>
+              <div class="step-arrow">&rarr;</div>
+              <div class="lifecycle-step" data-step="PLANNING">PLANNING</div>
+              <div class="step-arrow">&rarr;</div>
+              <div class="lifecycle-step" data-step="CODING">CODING</div>
+              <div class="step-arrow">&rarr;</div>
+              <div class="lifecycle-step" data-step="TESTING">TESTING</div>
+              <div class="step-arrow">&rarr;</div>
+              <div class="lifecycle-step" data-step="REVIEWING">REVIEWING</div>
+              <div class="step-arrow">&rarr;</div>
+              <div class="lifecycle-step" data-step="DEBUGGING">DEBUGGING</div>
+              <div class="step-arrow">&rarr;</div>
+              <div class="lifecycle-step" data-step="COMPLETE">COMPLETE</div>
+            </div>
+          </div>
+
+          <!-- Middle Row: 6 Persona Agent Grid -->
+          <div class="agent-personas-grid" id="agent-personas-container">
+            <!-- Dynamically populated 6 agent cards -->
+          </div>
+
+          <!-- Bottom Row: Terminal Event Stream & Subtask Execution List -->
+          <div class="agent-bottom-grid">
+            
+            <!-- Terminal Event Stream -->
+            <div class="card glass-card terminal-card">
+              <div class="card-header flex-between">
+                <div>
+                  <span class="card-subtitle">REAL-TIME LOG STREAM</span>
+                  <h3>Agent Event Log Terminal</h3>
+                </div>
+                <span class="badge badge-success font-mono" id="log-count-badge">0 EVENTS</span>
+              </div>
+              <div class="terminal-body" id="agent-terminal-stream">
+                <div class="log-line text-muted">[SYSTEM] Observatory Agent Event Stream connected...</div>
+              </div>
+            </div>
+
+            <!-- Subtask Execution Pipeline -->
+            <div class="card glass-card subtasks-card">
+              <div class="card-header">
+                <span class="card-subtitle">TYPED ARTIFACT PIPELINE</span>
+                <h3>Active Subtask Execution List</h3>
+              </div>
+              <div class="subtasks-list" id="agent-subtasks-container">
+                <p class="text-muted">No active subtasks registered.</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= TAB: AGENT CHAT HUB ================= -->
+      <section id="tab-chat" class="tab-panel">
+        <div class="chat-hub-layout">
+          
+          <!-- Chat Sidebar: Persona Selection & Context Attachment -->
+          <div class="card glass-card chat-sidebar">
+            <div class="card-header">
+              <span class="card-subtitle">PERSONA SELECTOR</span>
+              <h3>Agent Directives</h3>
+            </div>
+            <div class="card-body">
+              <div class="persona-picker-list" id="chat-persona-list">
+                
+                <div class="persona-pick-item active" data-persona="auto">
+                  <div class="persona-icon-avatar auto-avatar">&#10024;</div>
+                  <div class="persona-pick-meta">
+                    <span class="persona-pick-name">Auto-Dispatch (Router)</span>
+                    <span class="persona-pick-desc">Zero-Shot intent classification with budget guard</span>
+                  </div>
+                </div>
+
+                <div class="persona-pick-item" data-persona="orchestrator">
+                  <div class="persona-icon-avatar orch-avatar">&#128736;</div>
+                  <div class="persona-pick-meta">
+                    <span class="persona-pick-name">Orchestrator Supervisor</span>
+                    <span class="persona-pick-desc">Lifecycle coordinator &amp; budget circuit breaker</span>
+                  </div>
+                </div>
+
+                <div class="persona-pick-item" data-persona="planner">
+                  <div class="persona-icon-avatar planner-avatar">&#128506;</div>
+                  <div class="persona-pick-meta">
+                    <span class="persona-pick-name">DAG Architecture Planner</span>
+                    <span class="persona-pick-desc">Decomposes objectives into typed subtask DAGs</span>
+                  </div>
+                </div>
+
+                <div class="persona-pick-item" data-persona="coder">
+                  <div class="persona-icon-avatar coder-avatar">&#128187;</div>
+                  <div class="persona-pick-meta">
+                    <span class="persona-pick-name">Code Synthesis Agent</span>
+                    <span class="persona-pick-desc">Synthesizes atomic unified code diffs</span>
+                  </div>
+                </div>
+
+                <div class="persona-pick-item" data-persona="tester">
+                  <div class="persona-icon-avatar tester-avatar">&#129514;</div>
+                  <div class="persona-pick-meta">
+                    <span class="persona-pick-name">Automated Test Runner</span>
+                    <span class="persona-pick-desc">Assertion verification &amp; edge case execution</span>
+                  </div>
+                </div>
+
+                <div class="persona-pick-item" data-persona="reviewer">
+                  <div class="persona-icon-avatar reviewer-avatar">&#128065;</div>
+                  <div class="persona-pick-meta">
+                    <span class="persona-pick-name">Code Reviewer &amp; Auditor</span>
+                    <span class="persona-pick-desc">Security checks &amp; adversarial merge gatekeeper</span>
+                  </div>
+                </div>
+
+                <div class="persona-pick-item" data-persona="debugger">
+                  <div class="persona-icon-avatar debugger-avatar">&#128269;</div>
+                  <div class="persona-pick-meta">
+                    <span class="persona-pick-name">Root Cause Debugger</span>
+                    <span class="persona-pick-desc">Traceback localization &amp; targeted patch advice</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Context Attachments Box -->
+              <div class="chat-context-box mt-3">
+                <span class="card-subtitle">CONTEXT ATTACHMENT</span>
+                <label class="form-label" for="chat-context-files">Focus Workspace Files (comma-separated):</label>
+                <input type="text" id="chat-context-files" class="dark-input font-mono" placeholder="meta_harness/orchestrator/config.py" value="meta_harness/orchestrator/config.py">
+              </div>
+
+              <div class="chat-quick-actions mt-3">
+                <span class="card-subtitle">PROMPT PRESETS</span>
+                <div class="quick-chip-container">
+                  <button class="chip-btn" data-preset="Plan a streaming SSE telemetry endpoint for the GUI server">Decompose SSE Stream</button>
+                  <button class="chip-btn" data-preset="Implement an adaptive retry wrapper with exponential backoff">Implement Exponential Backoff</button>
+                  <button class="chip-btn" data-preset="Diagnose potential memory leaks in SQLite-WAL long-running sessions">Diagnose Memory Leak</button>
+                  <button class="chip-btn" data-preset="Audit router manifest validation for injection vulnerabilities">Security Audit Manifest</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Main Chat Feed & Input Box -->
+          <div class="card glass-card chat-main-feed">
+            <div class="card-header flex-between">
+              <div class="chat-active-persona-header">
+                <span class="card-subtitle">CONVERSATION FEED</span>
+                <h3 id="chat-target-display">Agent Chat: Auto-Dispatch</h3>
+              </div>
+              <div class="chat-header-actions">
+                <span class="badge badge-info font-mono" id="chat-model-badge">gemini-2.0-flash</span>
+                <button class="btn btn-secondary btn-sm" id="btn-clear-chat">Clear Transcript</button>
+              </div>
+            </div>
+
+            <!-- Messages Transcript -->
+            <div class="chat-messages-container" id="chat-messages-container">
+              <!-- Dynamically populated messages -->
+            </div>
+
+            <!-- Interactive Chat Input Toolbar -->
+            <div class="chat-input-toolbar">
+              <form id="chat-input-form" class="chat-input-form">
+                <div class="chat-input-wrapper">
+                  <textarea id="chat-prompt-input" class="chat-textarea" placeholder="Send an instruction, architecture question, code request, or error log to the agent... (Shift+Enter for newline, Enter to send)" rows="2"></textarea>
+                </div>
+                <div class="chat-input-controls">
+                  <div class="chat-hints">
+                    <span class="text-muted">&#9889; Guardrail: $0.33/day ceiling check</span>
+                  </div>
+                  <button type="submit" id="btn-send-chat" class="btn btn-primary">
+                    <span>Dispatch to Agent</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Detail Modal -->
+    <div id="feature-detail-modal" class="modal-backdrop">
+      <div class="modal-content glass-card">
+        <div class="modal-header">
+          <div>
+            <span class="card-subtitle" id="modal-subsystem">SUBSYSTEM</span>
+            <h3 id="modal-title">Feature Title</h3>
+          </div>
+          <button class="modal-close" id="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p id="modal-desc" class="modal-text"></p>
+          <div class="modal-meta-grid">
+            <div class="meta-item">
+              <span class="meta-label">Module Source File:</span>
+              <span class="meta-val font-mono" id="modal-file"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Tier / Role:</span>
+              <span class="meta-val" id="modal-tier"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Runtime Status:</span>
+              <span class="badge" id="modal-status"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Dependencies:</span>
+              <span class="meta-val font-mono" id="modal-deps"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Footer -->
+    <footer class="app-footer">
+      <span>Meta-Harness v5.0 Observatory // Standalone Local Edition</span>
+      <span class="footer-dot">&bull;</span>
+      <span>SQLite-WAL Active</span>
+      <span class="footer-dot">&bull;</span>
+      <span>Python 3.13 Threading Engine</span>
+    </footer>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+cache/
+*.db
+*.db-wal
+*.db-shm
+scip/
+__pycache__/
+.venv/
