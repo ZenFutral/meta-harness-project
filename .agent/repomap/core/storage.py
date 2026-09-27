@@ -127,19 +127,23 @@ class RepomapStorage:
         token_count: int,
         updated_at: int,
     ) -> None:
-        """Insert or replace a parse‑cache entry.
-
-        ``tags`` is a Python ``dict`` which will be JSON‑encoded before storage.
+        """Enqueue a write operation for parse_cache via DatabaseWriterQueue.
+        This method replaces the previous synchronous implementation to avoid
+        SQLite lock contention when many agents write concurrently.
         """
-        cur = self._conn.cursor()
-        tags_blob = json.dumps(tags).encode("utf-8")
-        cur.execute(
+        from ..db import get_writer_queue
+
+        sql = (
             "INSERT OR REPLACE INTO parse_cache "
             "(rel_fname, blake3_hash, tags_json, token_count, updated_at) "
-            "VALUES (?, ?, ?, ?, ?)",
-            (rel_fname, blake3_hash, tags_blob, token_count, updated_at),
+            "VALUES (?, ?, ?, ?, ?);"
         )
-        self._conn.commit()
+        tags_blob = json.dumps(tags).encode("utf-8")
+        writer_queue = get_writer_queue()
+        writer_queue.submit(sql, (rel_fname, blake3_hash, tags_blob, token_count, updated_at))
+        # Ensure the write completes before returning (useful for deterministic tests)
+        writer_queue._queue.join()
+
 
     # ---------------------------------------------------------------------
     # Invalidation helper – walks transitive dependencies up to 16 hops

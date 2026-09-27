@@ -57,6 +57,9 @@ def main() -> None:
     args = parse_args()
     setup_logging(args.verbose)
     log = logging.getLogger("main")
+    # Initialise the writer queue for SQLite WAL concurrency
+    from .db import get_writer_queue
+    writer_queue = get_writer_queue()
 
     context = load_context(args.context)
 

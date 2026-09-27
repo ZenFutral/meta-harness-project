@@ -12,11 +12,41 @@ if str(PROJECT_ROOT) not in sys.path:
 if str(AGENT_DIR) not in sys.path:
     sys.path.insert(0, str(AGENT_DIR))
 
+import repomap.db as db_mod
+import repomap.core.storage as storage_mod
+from repomap.core.storage import RepomapStorage
 from repomap.server import RepomapJSONRPCServer
 from repomap.cli import main as cli_main
 
 
 class Phase6Tests(unittest.TestCase):
+    def setUp(self):
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.repo_root = Path(self.tmp_dir.name)
+        self.db_file = self.repo_root / "test_repomap.db"
+
+        self.orig_db_path = storage_mod.DB_PATH
+        storage_mod.DB_PATH = self.db_file
+        db_mod.DB_PATH = self.db_file
+        if db_mod._writer_queue is not None:
+            db_mod._writer_queue.shutdown()
+            db_mod._writer_queue = None
+        RepomapStorage._instance = None
+
+    def tearDown(self):
+        if hasattr(self, "storage") and self.storage:
+            self.storage.close()
+        if db_mod._writer_queue is not None:
+            db_mod._writer_queue.shutdown()
+            db_mod._writer_queue = None
+        storage_mod.DB_PATH = self.orig_db_path
+        db_mod.DB_PATH = self.orig_db_path
+        RepomapStorage._instance = None
+        try:
+            self.tmp_dir.cleanup()
+        except Exception:
+            pass
+
     def test_step_6_1_repomap_tools_json_schema(self):
         tools_path = AGENT_DIR / "tools" / "repomap_tools.json"
         self.assertTrue(tools_path.exists(), "repomap_tools.json missing")
@@ -29,8 +59,7 @@ class Phase6Tests(unittest.TestCase):
             self.assertIn(t, tools, f"Tool spec {t} missing")
 
     def test_step_6_2_json_rpc_server_dispatch(self):
-        self.tmp_dir = tempfile.TemporaryDirectory()
-        repo_root = Path(self.tmp_dir.name)
+        repo_root = self.repo_root
 
         # Create sample file for indexing
         app_file = repo_root / "app.py"
@@ -71,8 +100,6 @@ class Phase6Tests(unittest.TestCase):
         })
         resp_invalid = json.loads(server.dispatch(req_invalid))
         self.assertIn("error", resp_invalid)
-
-        self.tmp_dir.cleanup()
 
     def test_step_6_3_cli_executable_launcher(self):
         launcher = AGENT_DIR / "bin" / "repomap"

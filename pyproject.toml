@@ -1,0 +1,14 @@
+[project]
+name = "meta-harness"
+version = "0.1.0"
+description = "Zero-dependency multi-agent orchestration framework"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0.0"]
+
+[project.scripts]
+meta-harness = "meta_harness.orchestrator.main:main"
+meta-harness-gui = "meta_harness.gui.cli:main"

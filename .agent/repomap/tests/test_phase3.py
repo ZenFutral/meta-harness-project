@@ -7,6 +7,7 @@ AGENT_DIR = Path(__file__).resolve().parents[2]
 if str(AGENT_DIR) not in sys.path:
     sys.path.insert(0, str(AGENT_DIR))
 
+import repomap.db as db_mod
 import repomap.core.storage as storage_mod
 from repomap.core.storage import RepomapStorage, get_storage
 from repomap.core.graph import TwoTierGraph
@@ -21,12 +22,20 @@ class Phase3Tests(unittest.TestCase):
 
         self.orig_db_path = storage_mod.DB_PATH
         storage_mod.DB_PATH = self.db_file
+        db_mod.DB_PATH = self.db_file
+        if db_mod._writer_queue is not None:
+            db_mod._writer_queue.shutdown()
+            db_mod._writer_queue = None
         RepomapStorage._instance = None
         self.storage = get_storage()
 
     def tearDown(self):
         self.storage.close()
+        if db_mod._writer_queue is not None:
+            db_mod._writer_queue.shutdown()
+            db_mod._writer_queue = None
         storage_mod.DB_PATH = self.orig_db_path
+        db_mod.DB_PATH = self.orig_db_path
         RepomapStorage._instance = None
         self.tmp_dir.cleanup()
 
