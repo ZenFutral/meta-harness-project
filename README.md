@@ -235,7 +235,7 @@ Please review [ARCHITECTURE.md](./meta-harness/ARCHITECTURE.md) before designing
    pip install -r requirements.txt
    ```
 
-3. **Verify Environment**:
+1. **Verify Environment**:
 
    ```bash
    pytest
@@ -260,6 +260,8 @@ Please review [ARCHITECTURE.md](./meta-harness/ARCHITECTURE.md) before designing
 - **Clear, imperative commit messages**: e.g., `feat(router): add adaptive temperature thresholding` or `fix(gui): sanitize probe rpc inputs`.
 - Keep PRs focused on a single responsibility.
 - Ensure all CI tests pass.
+
 #    m e t a - h a r n e s s - p r o j e c t 
+
  
  

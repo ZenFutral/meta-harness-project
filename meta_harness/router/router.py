@@ -13,7 +13,7 @@ from typing import List, Literal, Optional
 from .manifest import RoutingManifest
 from .zero_shot import ZeroShotIntentClassifier
 from .flash_fallback import FlashFallbackRouter
-
+from .stage1 import DeterministicIntentRouter
 log = logging.getLogger(__name__)
 
 
@@ -54,7 +54,7 @@ class ModelRouter(BaseRouter):
         self._tier_order = ["flash", "pro"]
         self.zero_shot = ZeroShotIntentClassifier()
         self.flash_fallback = FlashFallbackRouter()
-
+        self.fast_path = DeterministicIntentRouter()
     def model_id_for_persona(self, persona: str) -> str:
         cfg = _get_config()
         if persona not in cfg.PERSONAS:
@@ -128,9 +128,21 @@ class ModelRouter(BaseRouter):
 
     def route_with_fallback(self, prompt: str, **kwargs) -> RoutingManifest:
         # Stage 1: Fast-path Zero-shot intent classification
-        fast_manifest = self.zero_shot.route_fast_path(prompt, **kwargs)
-        if fast_manifest is not None:
-            return fast_manifest
+        # Stage 1: Deterministic fast-path routing
+        intent = self.fast_path.route(prompt)
+        from .stage1 import DEFAULT_INTENT
+        if intent != DEFAULT_INTENT:
+            # Determine token budget based on intent
+            budget = 4096 if intent == "refactor_code" else 2048
+            return RoutingManifest(
+                intent=intent,
+                primary_target_symbols=kwargs.get("primary_target_symbols", []),
+                focus_files=kwargs.get("focus_files", []),
+                repomap_token_budget=budget,
+                require_blast_radius=kwargs.get("require_blast_radius", False),
+                execution_engine=kwargs.get("execution_engine", "repomap_only"),
+                task_instructions=f"Deterministic fast‑path routed for intent {intent}",
+            )
 
         # Stage 2: Vertex AI Flash ambiguity fallback with budget circuit breaker
         return self.flash_fallback.route_fallback(prompt, **kwargs)

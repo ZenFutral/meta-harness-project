@@ -122,22 +122,15 @@ def main():
     init_repomap(skip_index=args.skip_index)
     init_orchestrator()
 
-    from meta_harness.gui.server import create_server
-    server = create_server(host=args.host, port=args.port)
-    url = f"http://{args.host}:{args.port}"
-
+    from meta_harness.cli.hud import main as hud_main
     print_banner(args.host, args.port)
 
-    if not args.no_browser:
-        launch_browser(url)
-
     try:
-        server.serve_forever()
+        hud_main()
     except KeyboardInterrupt:
-        print("\n[*] Shutting down Meta-Harness GUI server & services...")
-        server.shutdown()
-        server.server_close()
-        print("[+] All Meta-Harness functions stopped cleanly.")
+        print("\n[*] Shutting down Meta-Harness services...")
+        # uvicorn.run exits on KeyboardInterrupt automatically
+
 
 
 if __name__ == "__main__":

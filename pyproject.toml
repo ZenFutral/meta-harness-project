@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Zero-dependency multi-agent orchestration framework"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = []
+dependencies = ["google-genai", "rich", "tree-sitter-languages", "networkx"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0.0"]

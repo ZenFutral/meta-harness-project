@@ -384,6 +384,14 @@ def set_vendor_enabled(vendor_id: str, enabled: bool) -> Dict[str, Any]:
         save_user_config(user_cfg)
 
     return load_vendor_config()
+def toggle_vendor(vendor_id: str, enabled: bool) -> dict:
+    """Toggle a vendor's enabled state via the existing set_vendor_enabled helper.
+
+    Returns a dict compatible with the API endpoint expectations.
+    """
+    set_vendor_enabled(vendor_id, enabled)
+    return {"success": True, "enabled": enabled}
+
 
 
 def is_vendor_enabled(vendor_id: str) -> bool:
